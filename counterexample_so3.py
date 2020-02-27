@@ -5,6 +5,15 @@ import numpy as np
 from geomstats.geometry import special_orthogonal
 
 
+def generateWithinGeodesicBall(manifold, radius):
+    d = distanceFunction(manifold)
+    I = manifold.get_identity(point_type='matrix')
+
+    while True:
+        sample = manifold.random_uniform(point_type='matrix')[0]
+        if (d(sample, I) < radius):
+            return sample
+
 def wFMFunction(manifold):
     def wFM(points, weights):
         points = np.stack(points)
@@ -78,11 +87,12 @@ if __name__ == "__main__":
 
     #we are working of SO(3)
     manifold = special_orthogonal.SpecialOrthogonal(3)
+    #injectivity radius
+    r = 0
 
-
-    A = manifold.random_uniform(point_type='matrix')[0]
-    B = manifold.random_uniform(point_type='matrix')[0]
-    C = manifold.random_uniform(point_type='matrix')[0]
+    A = generateWithinGeodesicBall(manifold, r)
+    B = generateWithinGeodesicBall(manifold, r)
+    C = generateWithinGeodesicBall(manifold, r)
 
     X = forwardTwoLayer(A,B,C, manifold)
 
@@ -102,9 +112,9 @@ if __name__ == "__main__":
     distance_function = distanceFunction(manifold)
     distances = []
     for i in range(500):
-        A = np.linalg.qr(np.random.rand(3,3))[0]
-        B = np.linalg.qr(np.random.rand(3,3))[0]
-        C = np.linalg.qr(np.random.rand(3,3))[0]
+        A = generateWithinGeodesicBall(manifold, r)
+        B = generateWithinGeodesicBall(manifold, r)
+        C = generateWithinGeodesicBall(manifold, r)
 
         out_two_layer = forwardTwoLayer(A,B,C, manifold)
         out_one_layer = forwardOneLayer(A,B,C, weights[0], weights[1], manifold)
