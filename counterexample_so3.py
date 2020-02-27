@@ -88,7 +88,7 @@ if __name__ == "__main__":
     #we are working of SO(3)
     manifold = special_orthogonal.SpecialOrthogonal(3)
     #injectivity radius
-    r = 0
+    r = np.pi
 
     A = generateWithinGeodesicBall(manifold, r)
     B = generateWithinGeodesicBall(manifold, r)
